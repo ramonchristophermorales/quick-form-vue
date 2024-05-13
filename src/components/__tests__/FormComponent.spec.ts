@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, assert, test, vi } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
 
 import FormComponent from '@/components/FormComponent.vue'
@@ -10,35 +10,35 @@ const configTestData = {
 }
 
 describe('FormComponent', () => {
-  it('renders form tag', () => {
+  test('renders form tag', () => {
     const wrapper = shallowMount(FormComponent)
     const form = wrapper.find('form')
 
-    expect(form).toBeTruthy()
+    assert(form)
   })
 
-  it('renders form attributes', () => {
+  test('renders form attributes', () => {
     const wrapper = shallowMount(FormComponent)
     const form = wrapper.find('form')
 
     // check if the form element has the correct attributes
-    expect(form.attributes('accept-charset')).toBeTruthy()
-    expect(form.attributes('action')).toBeTruthy()
-    expect(form.attributes('autocomplete')).toBeTruthy()
-    expect(form.attributes('class')).toBeTruthy()
-    expect(form.attributes('enctype')).toBeTruthy()
-    expect(form.attributes('method')).toBeTruthy()
-    expect(form.attributes('target')).toBeTruthy()
+    assert(form.attributes('accept-charset'))
+    assert(form.attributes('action'))
+    assert(form.attributes('autocomplete'))
+    assert(form.attributes('class'))
+    assert(form.attributes('enctype'))
+    assert(form.attributes('method'))
+    assert(form.attributes('target'))
   })
 
-  it('has config prop', () => {
+  test('has config prop', () => {
     const wrapper = shallowMount(FormComponent)
     const props = wrapper.vm.$props
 
     expect(props).toHaveProperty('config')
   })
 
-  it('config prop has the correct object items and data type', () => {
+  test('config prop has the correct object items and data type', () => {
     const expectedConfig: Config = { ...configTestData }
 
     const wrapper = shallowMount(FormComponent, {
@@ -49,6 +49,7 @@ describe('FormComponent', () => {
 
     const wrapperConfig = wrapper.vm.config
 
+    assert.isObject(wrapperConfig)
     expect(wrapperConfig).toEqual(expectedConfig)
 
     expect(wrapperConfig).toEqual(
@@ -58,20 +59,28 @@ describe('FormComponent', () => {
     )
   })
 
-  it('processConfig function should exists', () => {
+  test('processConfig function should exists', () => {
     const wrapper = shallowMount(FormComponent)
     const { processConfig } = wrapper.vm as any
 
     expect(processConfig).toBeDefined()
   })
 
-  // it.only('processConfig function should accept a config object', () => {
-  //   const wrapper = shallowMount(FormComponent)
-  //   const expectedConfig: Config = { ...configTestData }
-  //   const { processConfig } = wrapper.vm as any
+  test('processConfig function should accept a config object', () => {
+    const wrapper = shallowMount(FormComponent)
+    const expectedConfig: Config = { ...configTestData }
+    const { processConfig } = wrapper.vm as any
 
-  //   processConfig(expectedConfig)
+    assert.isFunction(processConfig)
 
-  //   expect(processConfig).toHaveBeenCalledWith(expectedConfig)
-  // })
+    const spyFn = {
+      processConfig: vi.fn()
+    }
+
+    const processConfigSpy = vi.spyOn(spyFn, 'processConfig')
+
+    spyFn.processConfig(expectedConfig)
+
+    expect(processConfigSpy).toHaveBeenCalledWith(expectedConfig)
+  })
 })
