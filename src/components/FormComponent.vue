@@ -2,16 +2,16 @@
 
 <script setup lang="ts">
 
-import { defineProps } from 'vue'
-import FormProps from '@/components/types/formProps';
+// import { defineProps } from 'vue'
+// import FormProps from '@/components/types/formProps';
 import type Config  from '@/components/types/config';
 
 const props = defineProps({
-    config: {
+    config:  {
         type: Object,
         default: () => {
             return {
-                method: ''
+                action: ''
             }
         }
     }
@@ -19,9 +19,9 @@ const props = defineProps({
 
 const processConfig = (config: Config):void => {   
     console.log(config)
-};
+}
 
-processConfig(props.config);
+processConfig(props.config as Config);
 
 </script>
 
