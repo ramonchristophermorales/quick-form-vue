@@ -3,22 +3,21 @@
 <script setup lang="ts">
 
 // import { defineProps } from 'vue'
-// import FormProps from '@/components/types/formProps';
-import type Config  from '@/components/types/config';
+import type {Config , FormAttributes}  from '@/components/types/config';
+import { errorLog } from '@/helper.ts';
 
-const props = defineProps({
-    config:  {
-        type: Object,
-        default: () => {
-            return {
-                action: ''
-            }
-        }
-    }
-});
+type PropsType = FormAttributes & {
+    config: Config
+}
+
+const props = defineProps<PropsType>();
 
 const processConfig = (config: Config):void => {   
-    console.log(config)
+    if (config === undefined) {
+        errorLog('Config prop is required')
+        return;
+    }
+    
 }
 
 processConfig(props.config as Config);
@@ -28,14 +27,8 @@ processConfig(props.config as Config);
 <template>
     <div>
         <form 
-            accept-charset="accept-charset"
-            action="action" 
-            autocomplete="autocomplete"
-            class="class"
-            enctype="enctype"
-            method="method" 
-            target="target"
-        >
+            v-bind="props"
+        >fuubar
             <slot></slot>
         </form>
     </div>
