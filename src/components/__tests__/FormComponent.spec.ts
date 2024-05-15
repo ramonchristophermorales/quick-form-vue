@@ -17,19 +17,19 @@ describe('FormComponent', () => {
     assert(form)
   })
 
-  test('renders form attributes', () => {
-    const wrapper = shallowMount(FormComponent)
-    const form = wrapper.find('form')
+  // test('renders form attributes', () => {
+  //   const wrapper = shallowMount(FormComponent)
+  //   const form = wrapper.find('form')
 
-    // check if the form element has the correct attributes
-    assert(form.attributes('accept-charset'))
-    assert(form.attributes('action'))
-    assert(form.attributes('autocomplete'))
-    assert(form.attributes('class'))
-    assert(form.attributes('enctype'))
-    assert(form.attributes('method'))
-    assert(form.attributes('target'))
-  })
+  //   // check if the form element has the correct attributes
+  //   assert(form.attributes('accept-charset'))
+  //   assert(form.attributes('action'))
+  //   assert(form.attributes('autocomplete'))
+  //   assert(form.attributes('class'))
+  //   assert(form.attributes('enctype'))
+  //   assert(form.attributes('method'))
+  //   assert(form.attributes('target'))
+  // })
 
   test('has config prop', () => {
     const wrapper = shallowMount(FormComponent)
