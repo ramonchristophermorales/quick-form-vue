@@ -1,7 +1,9 @@
-export type Config = FormAttributes & {
+export type Config = Partial<FormAttributes> & {
   items?: ConfigItem[]
 }
-export type ConfigItem = InputAttributes & {}
+export type ConfigItem = Partial<InputAttributes> & {}
+
+export type FormItem = ConfigItem
 
 export type FormAttributes = {
   acceptCharset?: string
