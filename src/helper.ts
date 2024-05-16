@@ -1,5 +1,5 @@
 const errorLog = (msg: string) => {
-  console.error(msg)
+  console.error('Quick Form Vue error: ' + msg)
 }
 
 export { errorLog }
