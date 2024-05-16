@@ -1,18 +1,27 @@
 <script setup lang="ts">
 
-import type {Config, ConfigItem, FormItem, FormAttributes}  from '@/components/types/config';
+import type {Config, ConfigItem, FormItem}  from '@/components/types/config';
+import type {FormAttributes} from '@/components/types/form';
 import { errorLog } from '@/helper';
 
-type PropsType = FormAttributes & {
-    config: Partial<Config>
-    items: ConfigItem[]
-}
-
-const props = defineProps<Readonly<PropsType>>();
+const props = defineProps({
+    config: {
+        type: Object as () => Config,
+        required: true,
+        default: {} as Config
+    },
+    items: {
+        type: Array as () => ConfigItem[],
+        required: false,
+        default: () => []
+    }
+});
 
 const formAttributes: Partial<FormAttributes> = {};
 
-var formItems: ConfigItem[] = props.items ?? [];
+var formItems: ConfigItem[] = props.items ?? [] as ConfigItem[];
+
+var defaultClass = 'form-control'; // default form class
 
 function isKeyInFormAttributes(key: string, obj: FormAttributes): key is keyof FormAttributes {
     return key in obj;
@@ -20,7 +29,7 @@ function isKeyInFormAttributes(key: string, obj: FormAttributes): key is keyof F
 
 const processFormItems =(formItems: FormItem[]):void => {
     if (formItems === undefined || formItems.length === 0) {
-        errorLog('Form items is required')
+        errorLog('Form "items" is required if there are no form components declared')
         return;
     }
 }
@@ -31,7 +40,7 @@ const processFormItems =(formItems: FormItem[]):void => {
  */
 const processConfig = (config: Config):void => {   
     if (config === undefined) {
-        errorLog('Config prop is required')
+        errorLog('Config "prop" is required')
         return;
     }
 
@@ -53,16 +62,16 @@ processConfig(props.config);
 
 // process the form items
 processFormItems(formItems);
+
 </script>
 
 <template>
-    <div>
-        <form 
-            v-bind="formAttributes"
-        >
-            <slot></slot>
-        </form>
-    </div>
+    <form 
+        v-bind="formAttributes"
+        :class="defaultClass"
+    >
+        <slot></slot>
+    </form>
 </template>
 
 <style lang="scss" scoped></style>
