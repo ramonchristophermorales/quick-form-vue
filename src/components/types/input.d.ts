@@ -1,4 +1,5 @@
 export type InputAttributes = {
+  name?: string // required
   accept?: string
   alt?: string
   autocomplete?: 'on' | 'off' | string
@@ -21,7 +22,6 @@ export type InputAttributes = {
   min?: number | string
   minlength?: number
   multiple?: boolean
-  name?: string
   pattern?: string
   placeholder?: string
   readonly?: boolean

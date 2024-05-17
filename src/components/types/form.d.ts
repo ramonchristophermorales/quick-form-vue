@@ -1,10 +1,11 @@
 export type FormAttributes = {
+  name: string // required
+
   acceptCharset?: string
   action?: string
   autocomplete?: 'on' | 'off' | string
   enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain'
   method?: 'post' | 'get' | 'dialog'
-  name?: string
   novalidate?: boolean
   target?: '_self' | '_blank' | '_parent' | '_top' | string
   rel?: string
