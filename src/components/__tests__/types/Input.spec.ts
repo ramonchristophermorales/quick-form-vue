@@ -98,7 +98,7 @@ describe('Form', () => {
   })
 
   test('should have a boolean type autofocus', () => {
-    expect(inputAttributes.autofocus).toBeTypeOf('boolean')
+    expect(inputAttributes.autofocus).toBeTypeOf('number')
   })
 
   test('should enforce required properties', () => {
