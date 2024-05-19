@@ -6,6 +6,11 @@ import { errorLog } from '@/helper';
 
 
 const props = defineProps({
+    conifg: {
+        type: Object as () => Config,
+        default: null,
+        required: true
+    },
     items: {
         type: Array as () => ConfigItem[],
         default: null,
@@ -273,7 +278,7 @@ const props = defineProps({
     },
 });
 
-const formAttributes: Partial<FormAttributes> = {...props};
+var formAttributes: Partial<FormAttributes> = {};
 
 var formItems: ConfigItem[] = props.items ?? [] as ConfigItem[];
 
