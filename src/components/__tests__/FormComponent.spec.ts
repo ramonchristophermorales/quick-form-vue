@@ -22,6 +22,10 @@ const getWrapper = (additionalProps: { [key: string]: any } = {}) => {
   return wrapper
 }
 
+const testFormAttributes: FormAttributes = {
+  name: 'test-form-name'
+}
+
 describe('FormComponent', () => {
   test('renders form tag', () => {
     const wrapper = getWrapper()
@@ -135,14 +139,14 @@ describe('FormComponent', () => {
   test('isKeyInFormAttributes accepts 2 arguments', () => {
     const wrapper = getWrapper()
     const { isKeyInFormAttributes } = wrapper.vm as any
-    const formAttributes: FormAttributes = {}
+
     const testKey = 'this-key-does-not-exist'
 
     const isKeyInFormAttributesSpy = vi.fn(isKeyInFormAttributes)
 
-    isKeyInFormAttributesSpy(testKey, formAttributes)
+    isKeyInFormAttributesSpy(testKey, testFormAttributes)
 
-    expect(isKeyInFormAttributesSpy).toHaveBeenCalledWith(testKey, formAttributes)
+    expect(isKeyInFormAttributesSpy).toHaveBeenCalledWith(testKey, testFormAttributes)
   })
 
   test('isKeyInFormAttributes function returns false if key does not exists', () => {
