@@ -1,6 +1,5 @@
 export type FormAttributes = {
-  name: string // required
-
+  name?: string // required
   acceptCharset?: string
   action?: string
   autocomplete?: 'on' | 'off' | string
@@ -9,6 +8,7 @@ export type FormAttributes = {
   novalidate?: boolean
   target?: '_self' | '_blank' | '_parent' | '_top' | string
   rel?: string
+
   // Global attributes
   accesskey?: string
   class?: string | { [key: string]: boolean }
@@ -24,6 +24,7 @@ export type FormAttributes = {
   tabindex?: number
   title?: string
   translate?: 'yes' | 'no'
+
   // Event attributes
   onSubmit?: (event: Event) => void
   onReset?: (event: Event) => void
@@ -43,6 +44,7 @@ export type FormAttributes = {
   onMouseOver?: (event: MouseEvent) => void
   onMouseUp?: (event: MouseEvent) => void
   onWheel?: (event: WheelEvent) => void
+
   // Vue specific attributes
   'v-model'?: any
   'v-if'?: boolean
@@ -56,3 +58,64 @@ export type FormAttributes = {
   'v-cloak'?: boolean
   'v-once'?: boolean
 }
+
+export const FormAttributeList: string[] = [
+  'name',
+  'acceptCharset',
+  'action',
+  'autocomplete',
+  'enctype',
+  'method',
+  'novalidate',
+  'target',
+  'rel',
+
+  // Global attributes
+  'accesskey',
+  'class',
+  'contenteditable',
+  'contextmenu',
+  'dir',
+  'draggable',
+  'hidden',
+  'id',
+  'lang',
+  'spellcheck',
+  'style',
+  'tabindex',
+  'title',
+  'translate',
+
+  // Event attributes
+  'onSubmit',
+  'onReset',
+  'onBlur',
+  'onChange',
+  'onClick',
+  'onDblClick',
+  'onFocus',
+  'onInput',
+  'onInvalid',
+  'onKeyDown',
+  'onKeyPress',
+  'onKeyUp',
+  'onMouseDown',
+  'onMouseMove',
+  'onMouseOut',
+  'onMouseOver',
+  'onMouseUp',
+  'onWheel',
+
+  // Vue specific attributes
+  'v-model',
+  'v-if',
+  'v-else',
+  'v-else-if',
+  'v-for',
+  'v-show',
+  'v-bind',
+  'v-on',
+  'v-pre',
+  'v-cloak',
+  'v-once'
+]

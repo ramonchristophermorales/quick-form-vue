@@ -11,12 +11,15 @@ const configTestData = {
 }
 
 const getWrapper = (additionalProps: { [key: string]: any } = {}) => {
+  const props = {
+    // name: 'test-name',
+    // config: { method: 'post' }, // required
+    // items: [{ name: 'test' }], // required if config{items} is not passed
+    ...additionalProps
+  }
+
   const wrapper = shallowMount(FormComponent, {
-    props: {
-      config: { method: 'post' }, // required
-      items: [{ name: 'test' }], // required if config{items} is not passed
-      ...additionalProps
-    }
+    props: props
   })
 
   return wrapper
@@ -56,13 +59,17 @@ describe('FormComponent', () => {
     assert(form.attributes('class') === defaultClass)
   })
 
-  test('renders form attributes', () => {
-    const wrapper = getWrapper({
-      acceptCharset: 'utf-8',
-      action: 'test-action-string',
-      method: 'post',
-      class: 'form-class'
-    })
+  test.only('renders form attributes', () => {
+    const additionalProps = {
+      config: {
+        acceptCharset: 'utf-8',
+        action: 'test-action-string',
+        method: 'post',
+        class: 'form-class'
+      }
+    }
+
+    const wrapper = getWrapper(additionalProps)
 
     const form = wrapper.find('form')
 
