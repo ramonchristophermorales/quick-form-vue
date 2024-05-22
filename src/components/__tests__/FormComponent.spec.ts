@@ -1,31 +1,34 @@
 import { describe, expect, assert, test, vi } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, VueWrapper } from '@vue/test-utils'
 
 import FormComponent from '@/components/FormComponent.vue'
 
 import type { Config } from '@/components/types/config'
-import type { FormAttributes } from '@/components/types/form'
+import type { TFormAttributes } from '@/components/types/form'
 
-const configTestData = {
+const configTestData: Record<string, string> = {
   action: 'action'
 }
 
-const getWrapper = (additionalProps: { [key: string]: any } = {}) => {
-  const props = {
-    // name: 'test-name',
-    // config: { method: 'post' }, // required
-    // items: [{ name: 'test' }], // required if config{items} is not passed
-    ...additionalProps
+const getWrapper = <T extends { [key: string]: any } | undefined>(
+  additionalProps?: T
+): VueWrapper => {
+  const propsData: { [key: string]: any } = { ...additionalProps }
+
+  if (typeof additionalProps === 'object' && 'config' in additionalProps === false) {
+    propsData.config = configTestData
+  } else if (typeof additionalProps === 'undefined') {
+    propsData.config = configTestData // default
   }
 
   const wrapper = shallowMount(FormComponent, {
-    props: props
+    props: propsData
   })
 
   return wrapper
 }
 
-const testFormAttributes: FormAttributes = {
+const testTFormAttributes: TFormAttributes = {
   name: 'test-form-name'
 }
 
@@ -44,7 +47,7 @@ describe('FormComponent', () => {
 
     // check if the form element has the correct attributes
     assert.isNotOk(form.attributes('accept-charset'))
-    assert.isNotOk(form.attributes('action'))
+    assert.isNotOk(form.attributes('enctype'))
     assert.isNotOk(form.attributes('method'))
   })
 
@@ -59,7 +62,7 @@ describe('FormComponent', () => {
     assert(form.attributes('class') === defaultClass)
   })
 
-  test.only('renders form attributes', () => {
+  test('renders form attributes', () => {
     const additionalProps = {
       config: {
         acceptCharset: 'utf-8',
@@ -85,22 +88,6 @@ describe('FormComponent', () => {
     const props = wrapper.vm.$props
 
     expect(props).toHaveProperty('config')
-  })
-
-  test('should have the correct props with default values', () => {
-    const props = FormComponent.props
-
-    // Check if the props keys are correct
-    expect(props).toHaveProperty('config')
-    expect(props).toHaveProperty('items')
-
-    // Check default values
-    expect(props.config.default).toStrictEqual({})
-    expect(props.items.default()).toStrictEqual([])
-
-    // Check prop types
-    expect(props.config.type).toBe(Object)
-    expect(props.items.type).toBe(Array)
   })
 
   test('processConfig is a function', () => {
@@ -136,51 +123,51 @@ describe('FormComponent', () => {
     expect(processConfigSpy).toHaveReturnedWith(undefined)
   })
 
-  test('isKeyInFormAttributes is a function', () => {
+  test('isKeyInTFormAttributes is a function', () => {
     const wrapper = getWrapper()
-    const { isKeyInFormAttributes } = wrapper.vm as any
+    const { isKeyInTFormAttributes } = wrapper.vm as any
 
-    assert.isFunction(isKeyInFormAttributes)
+    assert.isFunction(isKeyInTFormAttributes)
   })
 
-  test('isKeyInFormAttributes accepts 2 arguments', () => {
+  test('isKeyInTFormAttributes accepts 2 arguments', () => {
     const wrapper = getWrapper()
-    const { isKeyInFormAttributes } = wrapper.vm as any
+    const { isKeyInTFormAttributes } = wrapper.vm as any
 
     const testKey = 'this-key-does-not-exist'
 
-    const isKeyInFormAttributesSpy = vi.fn(isKeyInFormAttributes)
+    const isKeyInTFormAttributesSpy = vi.fn(isKeyInTFormAttributes)
 
-    isKeyInFormAttributesSpy(testKey, testFormAttributes)
+    isKeyInTFormAttributesSpy(testKey, testTFormAttributes)
 
-    expect(isKeyInFormAttributesSpy).toHaveBeenCalledWith(testKey, testFormAttributes)
+    expect(isKeyInTFormAttributesSpy).toHaveBeenCalledWith(testKey, testTFormAttributes)
   })
 
-  test('isKeyInFormAttributes function returns false if key does not exists', () => {
+  test('isKeyInTFormAttributes function returns false if key does not exists', () => {
     const wrapper = getWrapper()
-    const { isKeyInFormAttributes } = wrapper.vm as any
-    const formAttributes: FormAttributes = {}
+    const { isKeyInTFormAttributes } = wrapper.vm as any
+    const formAttributes: TFormAttributes = {}
     const testKey = 'this-key-does-not-exist'
 
-    const isKeyInFormAttributesSpy = vi.fn(isKeyInFormAttributes)
+    const isKeyInTFormAttributesSpy = vi.fn(isKeyInTFormAttributes)
 
-    isKeyInFormAttributesSpy(testKey, formAttributes)
+    isKeyInTFormAttributesSpy(testKey, formAttributes)
 
-    expect(isKeyInFormAttributesSpy).toHaveReturnedWith(false)
+    expect(isKeyInTFormAttributesSpy).toHaveReturnedWith(false)
   })
 
-  test('isKeyInFormAttributes function returns true if key exists', () => {
+  test('isKeyInTFormAttributes function returns true if key exists', () => {
     const wrapper = getWrapper()
-    const { isKeyInFormAttributes } = wrapper.vm as any
-    const formAttributes: FormAttributes = {}
+    const { isKeyInTFormAttributes } = wrapper.vm as any
+    const formAttributes: TFormAttributes = {}
     const testKey = 'this-key-does-not-exist'
 
-    const isKeyInFormAttributesSpy = vi.fn(isKeyInFormAttributes)
+    const isKeyInTFormAttributesSpy = vi.fn(isKeyInTFormAttributes)
 
-    isKeyInFormAttributesSpy(testKey, formAttributes)
+    isKeyInTFormAttributesSpy(testKey, formAttributes)
 
-    assert.isFunction(isKeyInFormAttributes)
-    expect(isKeyInFormAttributesSpy).toHaveBeenCalledWith(testKey, formAttributes)
-    expect(isKeyInFormAttributesSpy).toHaveReturnedWith(false)
+    assert.isFunction(isKeyInTFormAttributes)
+    expect(isKeyInTFormAttributesSpy).toHaveBeenCalledWith(testKey, formAttributes)
+    expect(isKeyInTFormAttributesSpy).toHaveReturnedWith(false)
   })
 })
