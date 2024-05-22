@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
 import type {Config, ConfigItem, FormItem}  from '@/components/types/config';
-import { type FormAttributes, FormAttributeList } from '@/components/types/form';
+import type { TFormAttributes } from '@/components/types/form';
+import  FormAttributeList from '@/components/typeDefaults/form';
 import { errorLog } from '@/helper';
 
 const props = defineProps({
@@ -277,12 +278,16 @@ const props = defineProps({
     // },
 });
 
-const formAttributes: FormAttributes = {} as FormAttributes;
+const formAttributes: TFormAttributes = {} as TFormAttributes;
 
 var formItems: ConfigItem[] = [] as ConfigItem[];
 
-function isKeyInFormAttributes(key: string): key is keyof FormAttributes {
-    return key in FormAttributeList;
+/**
+ * check if the key arg is part of the FormAttributeList
+ * @param key key of the form attribute
+ */
+function isKeyInTFormAttributes(key: string): key is keyof TFormAttributes {
+    return FormAttributeList.includes(key);
 }
 
 const defaultClass:string = 'form-control'; // default form class
@@ -302,7 +307,7 @@ const processFormItems =(formItems: FormItem[]):void => {
 const processConfig = (config: Config):void => {   
 
     if (typeof config !== 'object' || config === null) {
-        errorLog('Prop "config" is required')
+        errorLog('Prop "config" is required, and it should be an object')
         return;
     }
 
@@ -315,9 +320,7 @@ const processConfig = (config: Config):void => {
 
     // config properties takes priority over form attributes
     for (const [key, val] of Object.entries(config)) {
-        console.log(key);
-        console.log(isKeyInFormAttributes(key));
-        if (isKeyInFormAttributes(key) === true) {
+        if (isKeyInTFormAttributes(key) === true) {
             formAttributes[key] = val;
         }
     }
