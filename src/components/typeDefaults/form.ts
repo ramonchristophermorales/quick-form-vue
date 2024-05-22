@@ -1,0 +1,62 @@
+const FormAttributeList: string[] = [
+  'name',
+  'acceptCharset',
+  'action',
+  'autocomplete',
+  'enctype',
+  'method',
+  'novalidate',
+  'target',
+  'rel',
+
+  // Global attributes
+  'accesskey',
+  'class',
+  'contenteditable',
+  'contextmenu',
+  'dir',
+  'draggable',
+  'hidden',
+  'id',
+  'lang',
+  'spellcheck',
+  'style',
+  'tabindex',
+  'title',
+  'translate',
+
+  // Event attributes
+  'onSubmit',
+  'onReset',
+  'onBlur',
+  'onChange',
+  'onClick',
+  'onDblClick',
+  'onFocus',
+  'onInput',
+  'onInvalid',
+  'onKeyDown',
+  'onKeyPress',
+  'onKeyUp',
+  'onMouseDown',
+  'onMouseMove',
+  'onMouseOut',
+  'onMouseOver',
+  'onMouseUp',
+  'onWheel',
+
+  // Vue specific attributes
+  'v-model',
+  'v-if',
+  'v-else',
+  'v-else-if',
+  'v-for',
+  'v-show',
+  'v-bind',
+  'v-on',
+  'v-pre',
+  'v-cloak',
+  'v-once'
+]
+
+export default FormAttributeList
