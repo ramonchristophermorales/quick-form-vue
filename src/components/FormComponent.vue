@@ -3,7 +3,7 @@
 import type {Config, ConfigItem, FormItem}  from '@/components/types/config';
 import type { TFormAttributes } from '@/components/types/form';
 import  FormAttributeList from '@/components/typeDefaults/form';
-import { errorLog } from '@/helper';
+import { errorLog, typeCheck, isKeyOfType } from '@/helper';
 
 const props = defineProps({
     config: {
@@ -282,21 +282,27 @@ const formAttributes: TFormAttributes = {} as TFormAttributes;
 
 var formItems: ConfigItem[] = [] as ConfigItem[];
 
-/**
- * check if the key arg is part of the FormAttributeList
- * @param key key of the form attribute
- */
-function isKeyInTFormAttributes(key: string): key is keyof TFormAttributes {
-    return FormAttributeList.includes(key);
-}
-
 const defaultClass:string = 'form-control'; // default form class
 
 
-const processFormItems =(formItems: FormItem[]):void => {
-    if (formItems === undefined || formItems.length === 0) {
+const processFormItems =(formItems: unknown):void => {
+    if (formItems === undefined || Array.isArray(formItems) === false || formItems.length === 0) {
         errorLog('Form "items" is required if there are no form components declared')
         return;
+    }
+
+    // formItems.forEach((formItem: ConfigItem) => {
+        
+    // })
+}
+
+const processFormAttributes = (config: Config):void => {
+
+     // config properties takes priority over form attributes
+     for (const [key, val] of Object.entries(config)) {
+        if (isKeyOfType<TFormAttributes>(key, FormAttributeList) === true) {
+            formAttributes[key] = val;
+        }
     }
 }
 
@@ -304,9 +310,14 @@ const processFormItems =(formItems: FormItem[]):void => {
  * process the config attribute passed
  * config properties takes priority over inline attributes declaration of the component
  */
-const processConfig = (config: Config):void => {   
+const processConfig = (config: unknown):void => {   
 
     if (typeof config !== 'object' || config === null) {
+        errorLog('Prop "config" is required, and it should be an object')
+        return;
+    }
+
+    if (typeCheck<Config>(config, ['items']) === false) {
         errorLog('Prop "config" is required, and it should be an object')
         return;
     }
@@ -318,12 +329,7 @@ const processConfig = (config: Config):void => {
         processFormItems(formItems);
     }
 
-    // config properties takes priority over form attributes
-    for (const [key, val] of Object.entries(config)) {
-        if (isKeyInTFormAttributes(key) === true) {
-            formAttributes[key] = val;
-        }
-    }
+    processFormAttributes(config);
 }
 
 // process the config attribute passed first
