@@ -12,18 +12,18 @@ const errorLog = (msg: string) => {
  * @param obj - the object to be checked against T
  * @param knownProps - array list of known properties of the T
  */
-const typeCheck = <T extends object>(obj: T, knownProps: Array<keyof T>): obj is T => {
+const typeCheck = <T extends object>(obj: unknown, knownProps: unknown): obj is T => {
   if (typeof obj !== 'object' || obj === null) {
-    return false
-  }
-
-  if (Array.isArray(knownProps) === false || knownProps.length === 0) {
     return false
   }
 
   const objKeys: Array<keyof T> = Object.keys(obj) as Array<keyof T>
 
   if (objKeys.length === 0) return false
+
+  if (Array.isArray(knownProps) === false || knownProps.length === 0) {
+    return false
+  }
 
   // check if the object has all the known properties
   for (const prop of knownProps) {
@@ -37,14 +37,14 @@ const typeCheck = <T extends object>(obj: T, knownProps: Array<keyof T>): obj is
  * check if the key is of type T
  *
  * @param key - the key or property to be checked against T
- * @param props - array list of possible properties of the T
+ * @param knownProps - array list of possible properties of the T
  */
-const isKeyOfType = <T>(key: keyof T, props: Array<keyof T>): key is keyof T => {
-  if (typeof key !== 'string') return false
+const isKeyOfType = <T>(key: unknown, knownProps: unknown): key is keyof T => {
+  if (typeof key !== 'string' || key === '') return false
 
-  if (Array.isArray(props) === false) return false
+  if (Array.isArray(knownProps) === false || knownProps.length === 0) return false
 
-  return props.includes(key)
+  return knownProps.includes(key)
 }
 
 export { errorLog, typeCheck, isKeyOfType }
