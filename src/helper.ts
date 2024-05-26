@@ -23,15 +23,11 @@ const typeCheck = <T extends object>(obj: T, knownProps: Array<keyof T>): obj is
 
   const objKeys: Array<keyof T> = Object.keys(obj) as Array<keyof T>
 
-  if (objKeys.length === 0) {
-    return false
-  }
+  if (objKeys.length === 0) return false
 
   // check if the object has all the known properties
   for (const prop of knownProps) {
-    if (objKeys.includes(prop) === false) {
-      return false
-    }
+    if (objKeys.includes(prop) === false) return false
   }
 
   return true
@@ -44,9 +40,9 @@ const typeCheck = <T extends object>(obj: T, knownProps: Array<keyof T>): obj is
  * @param props - array list of possible properties of the T
  */
 const isKeyOfType = <T>(key: keyof T, props: Array<keyof T>): key is keyof T => {
-  if (typeof key !== 'string') {
-    return false
-  }
+  if (typeof key !== 'string') return false
+
+  if (Array.isArray(props) === false) return false
 
   return props.includes(key)
 }
