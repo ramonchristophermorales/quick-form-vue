@@ -1,6 +1,6 @@
 import { describe, expect, test, vi, beforeAll, afterAll } from 'vitest'
 
-import { errorLog, typeCheck, isKeyOfType } from '@/helper'
+import { errorLog, isType, isKeyOfType } from '@/helper'
 
 describe('Helper errorLog function', () => {
   const testErrorMessage: string = 'test error message'
@@ -48,7 +48,7 @@ describe('Helper errorLog function', () => {
   })
 })
 
-describe('Helper typeCheck function', () => {
+describe('Helper isType function', () => {
   type TestType = {
     string: string
     number: number
@@ -71,38 +71,38 @@ describe('Helper typeCheck function', () => {
   const testUnknownProps: string[] = ['unknown'] as any
 
   test('should be a function', () => {
-    expect(typeCheck).toBeTypeOf('function')
+    expect(isType).toBeTypeOf('function')
   })
 
   test('should accept argument obj as object', () => {
-    const typeCheckSpy = vi.fn(typeCheck)
+    const isTypeSpy = vi.fn(isType)
 
-    typeCheckSpy(testObjSuccess, [] as any)
-    expect(typeCheckSpy).toHaveBeenCalledWith(testObjSuccess, [])
+    isTypeSpy(testObjSuccess, [] as any)
+    expect(isTypeSpy).toHaveBeenCalledWith(testObjSuccess, [])
   })
 
   test('should accept argument knownProps as array', () => {
-    const typeCheckSpy = vi.fn(typeCheck)
+    const isTypeSpy = vi.fn(isType)
 
-    typeCheckSpy({} as any, testUnknownProps)
-    expect(typeCheckSpy).toHaveBeenCalledWith({}, testUnknownProps)
+    isTypeSpy({} as any, testUnknownProps)
+    expect(isTypeSpy).toHaveBeenCalledWith({}, testUnknownProps)
   })
 
   test('should return false if argument obj is not of type T', () => {
-    expect(typeCheck<TestType>(123 as any, testKnownProps)).toBe(false)
-    expect(typeCheck<TestType>(true as any, testKnownProps)).toBe(false)
-    expect(typeCheck<TestType>([] as any, testKnownProps)).toBe(false)
-    expect(typeCheck<TestType>(testObjSFail, testKnownProps)).toBe(false)
+    expect(isType<TestType>(123 as any, testKnownProps)).toBe(false)
+    expect(isType<TestType>(true as any, testKnownProps)).toBe(false)
+    expect(isType<TestType>([] as any, testKnownProps)).toBe(false)
+    expect(isType<TestType>(testObjSFail, testKnownProps)).toBe(false)
   })
 
   test('should return false if argument knownProps is not an array', () => {
-    expect(typeCheck<TestType>(testObjSuccess, 123 as any)).toBe(false)
-    expect(typeCheck<TestType>(testObjSuccess, true as any)).toBe(false)
-    expect(typeCheck<TestType>(testObjSuccess, testObjSFail as any)).toBe(false)
+    expect(isType<TestType>(testObjSuccess, 123 as any)).toBe(false)
+    expect(isType<TestType>(testObjSuccess, true as any)).toBe(false)
+    expect(isType<TestType>(testObjSuccess, testObjSFail as any)).toBe(false)
   })
 
   test('should return true if argument obj is of type T and argument knownProps is valid', () => {
-    expect(typeCheck<TestType>(testObjSuccess, testKnownProps)).toBe(true)
+    expect(isType<TestType>(testObjSuccess, testKnownProps)).toBe(true)
   })
 })
 
