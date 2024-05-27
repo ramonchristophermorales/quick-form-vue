@@ -12,7 +12,7 @@ const errorLog = (msg: string) => {
  * @param obj - the object to be checked against T
  * @param knownProps - array list of known properties of the T
  */
-const typeCheck = <T extends object>(obj: unknown, knownProps: unknown): obj is T => {
+const isType = <T extends object>(obj: unknown, knownProps: unknown): obj is T => {
   if (typeof obj !== 'object' || obj === null) {
     return false
   }
@@ -47,4 +47,4 @@ const isKeyOfType = <T>(key: unknown, knownProps: unknown): key is keyof T => {
   return knownProps.includes(key)
 }
 
-export { errorLog, typeCheck, isKeyOfType }
+export { errorLog, isType, isKeyOfType }
