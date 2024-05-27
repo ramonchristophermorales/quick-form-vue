@@ -3,23 +3,18 @@ import { shallowMount, VueWrapper } from '@vue/test-utils'
 
 import FormComponent from '@/components/FormComponent.vue'
 
-import type { Config } from '@/components/types/config'
+import type { Config, ConfigItem } from '@/components/types/config'
 import type { TFormAttributes } from '@/components/types/form'
 
-const configTestData: Record<string, string> = {
-  action: 'action'
+const configTestData: Config = {
+  name: 'form-test-name',
+  items: [] as ConfigItem[]
 }
 
-const getWrapper = <T extends { [key: string]: any } | undefined>(
-  additionalProps?: T
-): VueWrapper => {
-  const propsData: { [key: string]: any } = { ...additionalProps }
+const getWrapper = <T extends object | undefined>(additionalProps?: T): VueWrapper => {
+  const propsData: { [key: string]: any } = {}
 
-  if (typeof additionalProps === 'object' && 'config' in additionalProps === false) {
-    propsData.config = configTestData
-  } else if (typeof additionalProps === 'undefined') {
-    propsData.config = configTestData // default
-  }
+  propsData.config = Object.assign({}, configTestData, additionalProps) // default
 
   const wrapper = shallowMount(FormComponent, {
     props: propsData
@@ -28,12 +23,8 @@ const getWrapper = <T extends { [key: string]: any } | undefined>(
   return wrapper
 }
 
-const testTFormAttributes: TFormAttributes = {
-  name: 'test-form-name'
-}
-
-describe('FormComponent', () => {
-  test('renders form tag', () => {
+describe('FormComponent init', () => {
+  test('should renders form tag', () => {
     const wrapper = getWrapper()
     const form = wrapper.find('form')
 
@@ -62,14 +53,12 @@ describe('FormComponent', () => {
     assert(form.attributes('class') === defaultClass)
   })
 
-  test('renders form attributes', () => {
+  test('should render form attributes', () => {
     const additionalProps = {
-      config: {
-        acceptCharset: 'utf-8',
-        action: 'test-action-string',
-        method: 'post',
-        class: 'form-class'
-      }
+      acceptCharset: 'utf-8',
+      action: 'test-action-string',
+      method: 'post',
+      class: 'form-class'
     }
 
     const wrapper = getWrapper(additionalProps)
@@ -83,21 +72,23 @@ describe('FormComponent', () => {
     assert(form.attributes('class'))
   })
 
-  test('has config prop', () => {
+  test('should have config prop', () => {
     const wrapper = getWrapper()
     const props = wrapper.vm.$props
 
     expect(props).toHaveProperty('config')
   })
+})
 
-  test('processConfig is a function', () => {
+describe('FormComponent processConfig function', () => {
+  test('should be a function', () => {
     const wrapper = getWrapper()
     const { processConfig } = wrapper.vm as any
 
     assert.isFunction(processConfig)
   })
 
-  test('processConfig should accept 1 config argument', () => {
+  test('should accept 1 config argument', () => {
     const wrapper = getWrapper()
     const expectedConfig: Config = { ...configTestData }
 
@@ -110,7 +101,7 @@ describe('FormComponent', () => {
     expect(processConfigSpy).toHaveBeenCalledWith(expectedConfig)
   })
 
-  test('processConfig returns void', () => {
+  test('should return void always', () => {
     const wrapper = getWrapper()
     const expectedConfig: Config = { ...configTestData }
 
