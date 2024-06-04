@@ -1,10 +1,10 @@
-import type { FormAttributes } from '@/components/types/form'
-import type { InputAttributes } from '@/components/types/input'
+import type { TFormAttributes } from '@/components/types/form'
+import type { TInputAttributes } from '@/components/types/input'
 
 // @todo: need to fix Config type
-export type Config = FormAttributes & {
-  items?: ConfigItem[]
+export type TConfig = TFormAttributes & {
+  items?: TConfigItem[]
 }
-export type ConfigItem = InputAttributes & {}
+export type TConfigItem = TInputAttributes & {}
 
-export type FormItem = ConfigItem
+export type TFormItem = TConfigItem

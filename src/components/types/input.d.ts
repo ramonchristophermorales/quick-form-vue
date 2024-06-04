@@ -1,4 +1,4 @@
-export type InputAttributes = {
+export type TInputAttributes = {
   name?: string // required
   accept?: string
   alt?: string
