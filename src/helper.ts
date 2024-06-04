@@ -1,9 +1,21 @@
+const errorLogPrefix: string = 'Quick Form Vue error: '
+
 const errorLog = (msg: string) => {
   if (typeof msg !== 'string') {
     throw new TypeError('msg must be a string')
   }
 
-  console.error('Quick Form Vue error: ' + msg)
+  console.error(errorLogPrefix + msg)
+}
+
+const warnLogPrefix: string = 'Quick Form Vue warning: '
+
+const warnLog = (msg: string) => {
+  if (typeof msg !== 'string') {
+    throw new TypeError('msg must be a string')
+  }
+
+  console.warn(warnLogPrefix + msg)
 }
 
 /**
@@ -47,4 +59,4 @@ const isKeyOfType = <T>(key: unknown, knownProps: unknown): key is keyof T => {
   return knownProps.includes(key)
 }
 
-export { errorLog, isType, isKeyOfType }
+export { errorLogPrefix, errorLog, warnLogPrefix, warnLog, isType, isKeyOfType }
