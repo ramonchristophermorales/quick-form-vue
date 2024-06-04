@@ -1,24 +1,24 @@
 <script setup lang="ts">
 
-import type {Config, ConfigItem, FormItem}  from '@/components/types/config';
+import type {TConfig, TConfigItem, TFormItem}  from '@/components/types/config';
 import type { TFormAttributes } from '@/components/types/form';
 import  FormAttributeList from '@/components/typeDefaults/form';
-import { errorLog, isType, isKeyOfType } from '@/helper';
+import { errorLog, warnLog, isType, isKeyOfType } from '@/helper';
 
 const props = defineProps({
     config: {
-        type: Object as () => Config,
-        default: {} as Config,
+        type: Object as () => TConfig,
+        default: {} as TConfig,
         required: true
     },
 });
 
-const formAttributes: TFormAttributes = {} as TFormAttributes;
+// const formAttributes: Partial<TFormAttributes> = {} as Partial<TFormAttributes>;
+const formAttributes:any = {};
 
-var formItems: ConfigItem[] = [] as ConfigItem[];
+var formItems: TConfigItem[] = [] as TConfigItem[];
 
-const defaultClass:string = 'form-control'; // default form class
-
+var defaultClass:string = 'form-control'; // default form class
 
 const processFormItems =(formItems: unknown):void => {
     if (formItems === undefined || Array.isArray(formItems) === false || formItems.length === 0) {
@@ -28,7 +28,7 @@ const processFormItems =(formItems: unknown):void => {
 
     formItems.forEach((formItem: unknown) => {
         
-        if (isType<FormItem>(formItem, ['name']) === false) {
+        if (isType<TFormItem>(formItem, ['name']) === false) {
             errorLog('Form item "name" is required')
             return;
         }
@@ -41,13 +41,33 @@ const processFormItems =(formItems: unknown):void => {
 
 }
 
-const processFormAttributes = (config: Config):void => {
+const processFormAttributes = <T extends object = TConfig>(config: T):void => {
+
+	let listOfUnknownAttributes: string[] = [];
+
      // config properties takes priority over form attributes
      for (const [key, val] of Object.entries(config)) {
-        if (isKeyOfType<TFormAttributes>(key, FormAttributeList) === true) {
-            formAttributes[key] = val;
-        }
+        if (isKeyOfType<TFormAttributes>(key, FormAttributeList) === false) {
+			if (typeof key !== 'string' || typeof val !== 'string') {
+				errorLog(`Form attribute "${key}" should be a string and it's value should be a string`)
+				return;
+			}
+
+			listOfUnknownAttributes.push(key);
+        } 
+		
+		// change default class if there is class key in the form attribute list
+		if (key === 'class') {
+			defaultClass = val;
+		}
+
+        // still add the form attribute even if it doesn't belong to the form attribute list
+        formAttributes[key] = val;
     }
+
+	if (listOfUnknownAttributes.length > 0) {
+		warnLog(`Form attributes: ${listOfUnknownAttributes.join(', ')} are not known to the form component`)
+	}
 
     // @todo: process the direct props of the form component, for now use props.config for the form attribs
 }
@@ -58,16 +78,18 @@ const processFormAttributes = (config: Config):void => {
  */
 const processConfig = (config: unknown):void => {   
 
-    if (isType<Config>(config, ['name', 'items']) === false) {
+    if (isType<TConfig>(config, ['name', 'items']) === false) {
         throw new TypeError('Prop "config.items" and "config.name" is required, and it should be an object')
     }
 
     // config items takes priority and change the formItems from component props
     if (config.items !== undefined && config.items.length > 0) {
-        formItems = config.items;
+        formItems = {...config.items};
 
         processFormItems(formItems);
     }
+
+	delete config.items;
 
     processFormAttributes(config);
 }
