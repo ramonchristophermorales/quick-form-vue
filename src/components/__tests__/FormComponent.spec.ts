@@ -1,14 +1,15 @@
-import { describe, expect, assert, test, vi } from 'vitest'
+import { describe, expect, assert, test, vi, beforeAll, afterAll } from 'vitest'
 import { shallowMount, VueWrapper } from '@vue/test-utils'
 
 import FormComponent from '@/components/FormComponent.vue'
 
-import type { Config, ConfigItem } from '@/components/types/config'
-import type { TFormAttributes } from '@/components/types/form'
+import type { TConfig, TConfigItem } from '@/components/types/config'
 
-const configTestData: Config = {
+import { errorLogPrefix, warnLogPrefix } from '@/helper'
+
+const configTestData: TConfig = {
   name: 'form-test-name',
-  items: [] as ConfigItem[]
+  items: [] as TConfigItem[]
 }
 
 const getWrapper = <T extends object | undefined>(additionalProps?: T): VueWrapper => {
@@ -24,6 +25,21 @@ const getWrapper = <T extends object | undefined>(additionalProps?: T): VueWrapp
 }
 
 describe('FormComponent init', () => {
+  let consoleWarnSpy: any
+  let consoleErrorSpy: any
+
+  beforeAll(() => {
+    // Mock console.error and console.log
+    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+  })
+
+  afterAll(() => {
+    // Restore original implementations
+    consoleWarnSpy.mockRestore()
+    consoleErrorSpy.mockRestore()
+  })
+
   test('should renders form tag', () => {
     const wrapper = getWrapper()
     const form = wrapper.find('form')
@@ -66,10 +82,72 @@ describe('FormComponent init', () => {
     const form = wrapper.find('form')
 
     // check if the form element has the correct attributes
-    assert(form.attributes('accept-charset'))
-    assert(form.attributes('action'))
-    assert(form.attributes('method'))
-    assert(form.attributes('class'))
+    expect(form.attributes('accept-charset')).toBe('utf-8')
+    expect(form.attributes('action')).toBe('test-action-string')
+    expect(form.attributes('method')).toBe('post')
+    expect(form.attributes('class')).toBe('form-class')
+  })
+
+  test('should render unkown for attributes', () => {
+    const additionalProps = {
+      unknown1: 'unknown value 1',
+      unknown2: 'unknown value 2'
+    }
+
+    const wrapper = getWrapper(additionalProps)
+
+    const form = wrapper.find('form')
+
+    expect(form.attributes('unknown1')).toBe('unknown value 1')
+    expect(form.attributes('unknown2')).toBe('unknown value 2')
+  })
+
+  test('should not render unknown attributes if values are not strings', () => {
+    const additionalProps = {
+      validKey1: 0,
+      validKey2: [],
+      validKey3: {},
+      validKey4: true
+    }
+
+    const wrapper = getWrapper(additionalProps)
+
+    const form = wrapper.find('form')
+
+    expect(form.attributes('validKey1')).toBeFalsy()
+    expect(form.attributes('validKey2')).toBeFalsy()
+    expect(form.attributes('validKey3')).toBeFalsy()
+    expect(form.attributes('validKey4')).toBeFalsy()
+  })
+
+  test('should console error the unknown attributes if values are not strings', () => {
+    const errorLogSpy = vi.spyOn(console, 'error')
+
+    const additionalProps = {
+      validKey1: 0
+    }
+
+    getWrapper(additionalProps)
+
+    expect(errorLogSpy).toHaveBeenCalledWith(
+      errorLogPrefix +
+        `Form attribute "validKey1" should be a string and it's value should be a string`
+    )
+  })
+
+  test('should console warn the unknown attributes', () => {
+    const errorLogSpy = vi.spyOn(console, 'warn')
+
+    const additionalProps = {
+      validKey1: 'string',
+      validKey2: 'string'
+    }
+
+    getWrapper(additionalProps)
+
+    expect(errorLogSpy).toHaveBeenCalledWith(
+      warnLogPrefix + 'Form attributes: validKey1, validKey2 are not known to the form component'
+    )
   })
 
   test('should have config prop', () => {
@@ -90,7 +168,7 @@ describe('FormComponent processConfig function', () => {
 
   test('should accept 1 config argument', () => {
     const wrapper = getWrapper()
-    const expectedConfig: Config = { ...configTestData }
+    const expectedConfig: TConfig = { ...configTestData }
 
     const { processConfig } = wrapper.vm as any
 
@@ -103,7 +181,7 @@ describe('FormComponent processConfig function', () => {
 
   test('should return void always', () => {
     const wrapper = getWrapper()
-    const expectedConfig: Config = { ...configTestData }
+    const expectedConfig: TConfig = { ...configTestData }
 
     const { processConfig } = wrapper.vm as any
 

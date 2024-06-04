@@ -1,6 +1,6 @@
 import { describe, expect, test, vi, beforeAll, afterAll } from 'vitest'
 
-import { errorLog, isType, isKeyOfType } from '@/helper'
+import { errorLog, warnLog, isType, isKeyOfType } from '@/helper'
 
 describe('Helper errorLog function', () => {
   const testErrorMessage: string = 'test error message'
@@ -42,9 +42,51 @@ describe('Helper errorLog function', () => {
 
     expect(errorLogSpy).toHaveBeenCalledWith(testConsoleErrorMessage)
   })
+})
+
+describe('Helper warnLog function', () => {
+  const testWarnMessage: string = 'test warn message'
+
+  let consoleWarnSpy: any
+
+  beforeAll(() => {
+    // Mock console.warn and console.log
+    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  })
+
+  afterAll(() => {
+    // Restore original implementations
+    consoleWarnSpy.mockRestore()
+  })
+
+  test('should be a function', () => {
+    expect(warnLog).toBeTypeOf('function')
+  })
+
+  test('should throw a TypeError if argument msg is not a string', () => {
+    expect(() => warnLog(0 as any)).toThrow(TypeError)
+    expect(() => warnLog(123 as any)).toThrow(TypeError)
+    expect(() => warnLog(true as any)).toThrow(TypeError)
+    expect(() => warnLog({} as any)).toThrow(TypeError)
+    expect(() => warnLog([] as any)).toThrow(TypeError)
+  })
+
+  test('should accept argument msg as string', () => {
+    expect(() => warnLog(testWarnMessage)).not.toThrow()
+  })
+
+  test('should call console.warn', () => {
+    const testConsoleErrorMessage: string = 'Quick Form Vue warning: ' + testWarnMessage
+
+    const warnLogSpy = vi.spyOn(console, 'warn')
+
+    warnLog(testWarnMessage)
+
+    expect(warnLogSpy).toHaveBeenCalledWith(testConsoleErrorMessage)
+  })
 
   test('should return void', () => {
-    expect(errorLog(testErrorMessage)).toBeUndefined()
+    expect(warnLog(testWarnMessage)).toBeUndefined()
   })
 })
 
