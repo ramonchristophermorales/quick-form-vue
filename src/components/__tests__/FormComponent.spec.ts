@@ -191,4 +191,58 @@ describe('FormComponent processConfig function', () => {
 
     expect(processConfigSpy).toHaveReturnedWith(undefined)
   })
+
+  test('should call processFormItems function if valid config.items props', () => {
+    // @todo
+  })
+})
+
+describe('FormComponent processFormItems function', () => {
+  const testConfigItems: TConfigItem[] = [
+    {
+      tagName: 'div',
+      class: 'text-class',
+      id: 'text-id'
+    },
+    {
+      tagName: 'input',
+      type: 'text',
+      name: 'input-text-name'
+    }
+  ]
+
+  test('should be a function', () => {
+    const wrapper = getWrapper()
+    const { processFormItems } = wrapper.vm as any
+
+    assert.isFunction(processFormItems)
+  })
+
+  test('should accept 1 config item argument', () => {
+    const wrapper = getWrapper()
+    const expectedConfig: TConfigItem[] = { ...testConfigItems }
+
+    const { processFormItems } = wrapper.vm as any
+
+    const processFormItemsSpy = vi.fn(processFormItems)
+
+    processFormItemsSpy(expectedConfig)
+
+    expect(processFormItemsSpy).toHaveBeenCalledWith(expectedConfig)
+  })
+
+  test('should return void always', () => {
+    const wrapper = getWrapper()
+    const expectedConfig: TConfigItem[] = { ...testConfigItems }
+
+    const { processFormItems } = wrapper.vm as any
+
+    const processFormItemsSpy = vi.fn(processFormItems)
+
+    processFormItemsSpy(expectedConfig)
+
+    expect(processFormItemsSpy).toHaveReturnedWith(undefined)
+  })
+
+  test('should call errorLog if tagName is invalid', () => {})
 })
