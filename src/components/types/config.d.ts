@@ -5,6 +5,8 @@ import type { TInputAttributes } from '@/components/types/input'
 export type TConfig = TFormAttributes & {
   items?: TConfigItem[]
 }
-export type TConfigItem = TInputAttributes & {}
+export type TConfigItem = Partial<TInputAttributes> & {
+  tagName: string
+}
 
 export type TFormItem = TConfigItem
