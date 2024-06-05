@@ -20,7 +20,7 @@ var formItems: TConfigItem[] = [] as TConfigItem[];
 
 var defaultClass:string = 'form-control'; // default form class
 
-const processFormItems =(formItems: unknown):void => {
+const processFormItems = <T = Readonly<unknown>>(formItems: T):void => {
     if (formItems === undefined || Array.isArray(formItems) === false || formItems.length === 0) {
         errorLog('Form "items" is required if there are no form components declared')
         return;
@@ -28,20 +28,45 @@ const processFormItems =(formItems: unknown):void => {
 
     formItems.forEach((formItem: unknown) => {
         
-        if (isType<TFormItem>(formItem, ['name']) === false) {
-            errorLog('Form item "name" is required')
+        if (isType<TFormItem>(formItem, ['name', 'tagName']) === false) {
+            errorLog('Form item "name" and/or "tagName" is required')
             return;
+        }
+
+        switch(formItem.tagName) {
+            case 'input':
+
+                break;
+
+            case 'select':
+
+                break;
+
+            case 'textarea':
+
+                break;
+
+            case 'label':
+
+                break;
+
+            case 'div':
+                // for div, call again the process for items
+                // wrap the items inside the div
+                break;
+
+            default:
+                errorLog(`Config item tagName "${formItem.tagName}" is invalid`)
+                return;
         }
 
         // @todo: process the form item
         // @todo: validate the form items, create different types according to what type the form item is. e.g. input[type=text], select, textarea, etc
         // @todo: process the form items by adding the form item components
     });
-
-
 }
 
-const processFormAttributes = <T extends object = TConfig>(config: T):void => {
+const processFormAttributes = <T extends object = Readonly<TConfig>>(config: T):void => {
 
 	let listOfUnknownAttributes: string[] = [];
 
@@ -76,7 +101,7 @@ const processFormAttributes = <T extends object = TConfig>(config: T):void => {
  * process the config attribute passed
  * config properties takes priority over inline attributes declaration of the component
  */
-const processConfig = (config: unknown):void => {   
+const processConfig = <T = Readonly<unknown>>(config: T):void => {   
 
     if (isType<TConfig>(config, ['name', 'items']) === false) {
         throw new TypeError('Prop "config.items" and "config.name" is required, and it should be an object')
@@ -103,8 +128,8 @@ processConfig(props.config);
     <form 
         v-bind="formAttributes"
         :class="defaultClass"
+        ref="form"
     >
-        <slot></slot>
     </form>
 </template>
 
