@@ -178,6 +178,34 @@ describe('FormComponent processConfig function', () => {
     expect(processConfigSpy).toHaveBeenCalledWith(expectedConfig)
   })
 
+  test('should throw an error if name is missing as config props', () => {
+    const wrapper = getWrapper()
+
+    const expectedConfig: TConfig = {
+      items: [
+        {
+          tagName: 'input'
+        }
+      ]
+    }
+
+    const { processConfig } = wrapper.vm as any
+
+    expect(() => processConfig(expectedConfig)).toThrow(Error)
+  })
+
+  test('should throw an error if items is missing as config props', () => {
+    const wrapper = getWrapper()
+
+    const expectedConfig: TConfig = {
+      name: 'test-form-name'
+    }
+
+    const { processConfig } = wrapper.vm as any
+
+    expect(() => processConfig(expectedConfig)).toThrow(Error)
+  })
+
   test('should return void always', () => {
     const wrapper = getWrapper()
     const expectedConfig: TConfig = { ...configTestData }
