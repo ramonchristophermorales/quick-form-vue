@@ -257,5 +257,31 @@ describe('FormComponent processFormItems function', () => {
     expect(processFormItemsSpy).toHaveReturnedWith(undefined)
   })
 
-  test('should call errorLog if tagName is invalid', () => {})
+  test('should call errorLog if tagName is invalid', () => {
+    const wrapper = getWrapper()
+
+    const expectedConfigItem = {
+      name: 'test-name'
+    }
+
+    const { processFormItems } = wrapper.vm as any
+
+    processFormItems(expectedConfigItem)
+
+    expect(consoleErrorSpy).toHaveBeenCalled()
+  })
+
+  test('should call errorLog if name is invalid', () => {
+    const wrapper = getWrapper()
+
+    const expectedConfigItem = {
+      tagName: 'test-name'
+    }
+
+    const { processFormItems } = wrapper.vm as any
+
+    processFormItems(expectedConfigItem)
+
+    expect(consoleErrorSpy).toHaveBeenCalled()
+  })
 })
