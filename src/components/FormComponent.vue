@@ -104,7 +104,7 @@ const processFormAttributes = <T extends object = Readonly<TConfig>>(config: T):
 const processConfig = <T = Readonly<unknown>>(config: T):void => {   
 
     if (isType<TConfig>(config, ['name', 'items']) === false) {
-        throw new TypeError('Prop "config.items" and "config.name" is required, and it should be an object')
+        throw new Error('Prop "config.items" and "config.name" is required, and it should be an object')
     }
 
     // config items takes priority and change the formItems from component props
