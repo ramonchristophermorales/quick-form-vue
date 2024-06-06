@@ -29,7 +29,6 @@ describe('FormComponent init', () => {
   let consoleErrorSpy: any
 
   beforeAll(() => {
-    // Mock console.error and console.log
     consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
   })
@@ -210,6 +209,20 @@ describe('FormComponent processFormItems function', () => {
       name: 'input-text-name'
     }
   ]
+
+  let consoleWarnSpy: any
+  let consoleErrorSpy: any
+
+  beforeAll(() => {
+    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+  })
+
+  afterAll(() => {
+    // Restore original implementations
+    consoleWarnSpy.mockRestore()
+    consoleErrorSpy.mockRestore()
+  })
 
   test('should be a function', () => {
     const wrapper = getWrapper()
