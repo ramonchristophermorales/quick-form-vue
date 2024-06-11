@@ -7,9 +7,14 @@ import type { TConfig, TConfigItem } from '@/components/types/config'
 
 import { errorLogPrefix, warnLogPrefix } from '@/helper'
 
-const configTestData: TConfig = {
+const configTestData = {
   name: 'form-test-name',
-  items: [] as TConfigItem[]
+  items: [
+    {
+      name: 'test-input-name',
+      tagName: 'input'
+    }
+  ]
 }
 
 const getWrapper = <T extends object | undefined>(additionalProps?: T): VueWrapper => {
@@ -28,22 +33,23 @@ describe('FormComponent init', () => {
   let consoleWarnSpy: any
   let consoleErrorSpy: any
 
-  beforeAll(() => {
-    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-  })
+  // beforeAll(() => {
+  //   consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  //   consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+  // })
 
-  afterAll(() => {
-    // Restore original implementations
-    consoleWarnSpy.mockRestore()
-    consoleErrorSpy.mockRestore()
-  })
+  // afterAll(() => {
+  //   // Restore original implementations
+  //   consoleWarnSpy.mockRestore()
+  //   consoleErrorSpy.mockRestore()
+  // })
 
   test('should renders form tag', () => {
     const wrapper = getWrapper()
+
     const form = wrapper.find('form')
 
-    assert(form)
+    expect(form)
   })
 
   test('no form attributes redered if no other props or no conditional props are passed', () => {
@@ -51,7 +57,6 @@ describe('FormComponent init', () => {
 
     const form = wrapper.find('form')
 
-    // check if the form element has the correct attributes
     assert.isNotOk(form.attributes('accept-charset'))
     assert.isNotOk(form.attributes('enctype'))
     assert.isNotOk(form.attributes('method'))
@@ -101,22 +106,11 @@ describe('FormComponent init', () => {
     expect(form.attributes('unknown2')).toBe('unknown value 2')
   })
 
-  test('should not render unknown attributes if values are not strings', () => {
-    const additionalProps = {
-      validKey1: 0,
-      validKey2: [],
-      validKey3: {},
-      validKey4: true
-    }
-
-    const wrapper = getWrapper(additionalProps)
-
-    const form = wrapper.find('form')
-
-    expect(form.attributes('validKey1')).toBeFalsy()
-    expect(form.attributes('validKey2')).toBeFalsy()
-    expect(form.attributes('validKey3')).toBeFalsy()
-    expect(form.attributes('validKey4')).toBeFalsy()
+  test('should throw type error if config values are not strings other than key:items', () => {
+    expect(() => getWrapper({ ...configTestData, validKey1: 0 })).toThrow(TypeError)
+    expect(() => getWrapper({ ...configTestData, validKey1: true })).toThrow(TypeError)
+    expect(() => getWrapper({ ...configTestData, validKey1: [] })).toThrow(TypeError)
+    expect(() => getWrapper({ ...configTestData, validKey1: {} })).toThrow(TypeError)
   })
 
   test('should console error the unknown attributes if values are not strings', () => {
@@ -219,8 +213,19 @@ describe('FormComponent processConfig function', () => {
     expect(processConfigSpy).toHaveReturnedWith(undefined)
   })
 
-  test('should call processFormItems function if valid config.items props', () => {
-    // @todo
+  test.only('should call processFormItems function if valid config.items props', () => {
+    const wrapper = getWrapper()
+    const expectedConfig: TConfig = { ...configTestData }
+
+    const { processConfig, processFormItems } = wrapper.vm as any
+
+    const processConfigSpy = vi.fn(processConfig)
+    // const processFormItemsSpy = vi.fn(processFormItems)
+    const processFormItemsSpy = vi.spyOn(wrapper.vm as any, 'processFormItems')
+
+    processConfig(expectedConfig)
+
+    expect(processFormItemsSpy).toHaveBeenCalledTimes(2)
   })
 })
 

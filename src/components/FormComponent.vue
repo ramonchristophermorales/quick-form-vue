@@ -21,16 +21,15 @@ var formItems: TConfigItem[] = [] as TConfigItem[];
 var defaultClass:string = 'form-control'; // default form class
 
 const processFormItems = <T = Readonly<unknown>>(formItems: T):void => {
+    
     if (formItems === undefined || Array.isArray(formItems) === false || formItems.length === 0) {
-        errorLog('Form "items" is required if there are no form components declared')
-        return;
+        throw new Error('Form "items" is required if there are no form components declared')
     }
 
     formItems.forEach((formItem: unknown) => {
         
         if (isType<TFormItem>(formItem, ['name', 'tagName']) === false) {
-            errorLog('Form item "name" and/or "tagName" is required')
-            return;
+            throw new Error('Form item "name" and/or "tagName" is required')
         }
 
         switch(formItem.tagName) {
@@ -74,8 +73,7 @@ const processFormAttributes = <T extends object = Readonly<TConfig>>(config: T):
      for (const [key, val] of Object.entries(config)) {
         if (isKeyOfType<TFormAttributes>(key, FormAttributeList) === false) {
 			if (typeof key !== 'string' || typeof val !== 'string') {
-				errorLog(`Form attribute "${key}" should be a string and it's value should be a string`)
-				return;
+				throw new TypeError(`Form attribute "${key}" should be a string and it's value should be a string`)
 			}
 
 			listOfUnknownAttributes.push(key);
@@ -102,16 +100,14 @@ const processFormAttributes = <T extends object = Readonly<TConfig>>(config: T):
  * config properties takes priority over inline attributes declaration of the component
  */
 const processConfig = <T = Readonly<unknown>>(config: T):void => {   
-
+    
     if (isType<TConfig>(config, ['name', 'items']) === false) {
         throw new Error('Prop "config.items" and "config.name" is required, and it should be an object')
     }
-
+    
     // config items takes priority and change the formItems from component props
     if (config.items !== undefined && config.items.length > 0) {
-        formItems = {...config.items};
-
-        processFormItems(formItems);
+        processFormItems(config.items);
     }
 
 	delete config.items;
