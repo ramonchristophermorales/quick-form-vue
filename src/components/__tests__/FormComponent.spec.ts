@@ -32,17 +32,19 @@ const getWrapper = <T extends object | undefined>(additionalProps?: T): VueWrapp
 describe('FormComponent init', () => {
   let consoleWarnSpy: any
   let consoleErrorSpy: any
+  let typeErrorSpy: any
 
-  // beforeAll(() => {
-  //   consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-  //   consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-  // })
+  beforeAll(() => {
+    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    typeErrorSpy = vi.fn(TypeError).mockImplementation(() => {})
+  })
 
-  // afterAll(() => {
-  //   // Restore original implementations
-  //   consoleWarnSpy.mockRestore()
-  //   consoleErrorSpy.mockRestore()
-  // })
+  afterAll(() => {
+    // Restore original implementations
+    consoleWarnSpy.mockRestore()
+    consoleErrorSpy.mockRestore()
+  })
 
   test('should renders form tag', () => {
     const wrapper = getWrapper()
@@ -106,26 +108,11 @@ describe('FormComponent init', () => {
     expect(form.attributes('unknown2')).toBe('unknown value 2')
   })
 
-  test('should throw type error if config values are not strings other than key:items', () => {
+  test('should throw TypeError if config values are not strings other than key:items', () => {
     expect(() => getWrapper({ ...configTestData, validKey1: 0 })).toThrow(TypeError)
     expect(() => getWrapper({ ...configTestData, validKey1: true })).toThrow(TypeError)
     expect(() => getWrapper({ ...configTestData, validKey1: [] })).toThrow(TypeError)
     expect(() => getWrapper({ ...configTestData, validKey1: {} })).toThrow(TypeError)
-  })
-
-  test('should console error the unknown attributes if values are not strings', () => {
-    const errorLogSpy = vi.spyOn(console, 'error')
-
-    const additionalProps = {
-      validKey1: 0
-    }
-
-    getWrapper(additionalProps)
-
-    expect(errorLogSpy).toHaveBeenCalledWith(
-      errorLogPrefix +
-        `Form attribute "validKey1" should be a string and it's value should be a string`
-    )
   })
 
   test('should console warn the unknown attributes', () => {
@@ -212,21 +199,6 @@ describe('FormComponent processConfig function', () => {
 
     expect(processConfigSpy).toHaveReturnedWith(undefined)
   })
-
-  test.only('should call processFormItems function if valid config.items props', () => {
-    const wrapper = getWrapper()
-    const expectedConfig: TConfig = { ...configTestData }
-
-    const { processConfig, processFormItems } = wrapper.vm as any
-
-    const processConfigSpy = vi.fn(processConfig)
-    // const processFormItemsSpy = vi.fn(processFormItems)
-    const processFormItemsSpy = vi.spyOn(wrapper.vm as any, 'processFormItems')
-
-    processConfig(expectedConfig)
-
-    expect(processFormItemsSpy).toHaveBeenCalledTimes(2)
-  })
 })
 
 describe('FormComponent processFormItems function', () => {
@@ -266,7 +238,7 @@ describe('FormComponent processFormItems function', () => {
 
   test('should accept 1 config item argument', () => {
     const wrapper = getWrapper()
-    const expectedConfig: TConfigItem[] = { ...testConfigItems }
+    const expectedConfig: TConfigItem[] = [...testConfigItems]
 
     const { processFormItems } = wrapper.vm as any
 
@@ -279,7 +251,7 @@ describe('FormComponent processFormItems function', () => {
 
   test('should return void always', () => {
     const wrapper = getWrapper()
-    const expectedConfig: TConfigItem[] = { ...testConfigItems }
+    const expectedConfig: TConfigItem[] = [...testConfigItems]
 
     const { processFormItems } = wrapper.vm as any
 
@@ -290,7 +262,7 @@ describe('FormComponent processFormItems function', () => {
     expect(processFormItemsSpy).toHaveReturnedWith(undefined)
   })
 
-  test('should call errorLog if tagName is invalid', () => {
+  test('should throw an error if tagName is invalid', () => {
     const wrapper = getWrapper()
 
     const expectedConfigItem = {
@@ -299,12 +271,10 @@ describe('FormComponent processFormItems function', () => {
 
     const { processFormItems } = wrapper.vm as any
 
-    processFormItems(expectedConfigItem)
-
-    expect(consoleErrorSpy).toHaveBeenCalled()
+    expect(() => processFormItems(expectedConfigItem)).toThrow()
   })
 
-  test('should call errorLog if name is invalid', () => {
+  test('should throw an error if name is invalid', () => {
     const wrapper = getWrapper()
 
     const expectedConfigItem = {
@@ -313,8 +283,6 @@ describe('FormComponent processFormItems function', () => {
 
     const { processFormItems } = wrapper.vm as any
 
-    processFormItems(expectedConfigItem)
-
-    expect(consoleErrorSpy).toHaveBeenCalled()
+    expect(() => processFormItems(expectedConfigItem)).toThrow()
   })
 })

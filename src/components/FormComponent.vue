@@ -21,16 +21,19 @@ var formItems: TConfigItem[] = [] as TConfigItem[];
 var defaultClass:string = 'form-control'; // default form class
 
 const processFormItems = <T = Readonly<unknown>>(formItems: T):void => {
-    
+
     if (formItems === undefined || Array.isArray(formItems) === false || formItems.length === 0) {
         throw new Error('Form "items" is required if there are no form components declared')
     }
 
     formItems.forEach((formItem: unknown) => {
         
-        if (isType<TFormItem>(formItem, ['name', 'tagName']) === false) {
-            throw new Error('Form item "name" and/or "tagName" is required')
-        }
+        if (isType<TFormItem>(formItem, ['tagName']) === false)
+            throw new Error('Form item  "tagName" is required')
+
+
+        if (['input', 'select', 'textarea'].includes(formItem.tagName) === true && isType<TFormItem>(formItem, ['name']) === false) 
+            throw new Error('Form item "name" is required for input, select and textarea')
 
         switch(formItem.tagName) {
             case 'input':
