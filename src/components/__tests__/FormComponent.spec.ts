@@ -5,7 +5,7 @@ import FormComponent from '@/components/FormComponent.vue'
 
 import type { TConfig, TConfigItem } from '@/components/types/config'
 
-import { errorLogPrefix, warnLogPrefix } from '@/helper'
+import { warnLogPrefix } from '@/helper'
 
 const configTestData = {
   name: 'form-test-name',
@@ -32,12 +32,10 @@ const getWrapper = <T extends object | undefined>(additionalProps?: T): VueWrapp
 describe('FormComponent init', () => {
   let consoleWarnSpy: any
   let consoleErrorSpy: any
-  let typeErrorSpy: any
 
   beforeAll(() => {
     consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    typeErrorSpy = vi.fn(TypeError).mockImplementation(() => {})
   })
 
   afterAll(() => {
