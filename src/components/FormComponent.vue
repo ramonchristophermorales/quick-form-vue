@@ -2,8 +2,9 @@
 
 import type {TConfig, TFormItem}  from '@/components/types/config';
 import type { TFormAttributes } from '@/components/types/form';
+import type { TComponentItem } from '@/components/types/component';
 import  FormAttributeList from '@/components/typeDefaults/form';
-import { errorLog, warnLog, isType, isKeyOfType } from '@/helper';
+import { warnLog, isType, isKeyOfType } from '@/helper';
 import tagNameListArr from '@/assets/data/tagNameList.json';
 
 // import InputComponent from '@components/InputComponent.vue';
@@ -20,7 +21,7 @@ const props = defineProps({
 const formAttributes:any = {};
 
 // used to loop in the form items
-const formItems: TFormItem[] = [];   
+const componentList: TComponentItem[] = [];   
 
 var defaultClass:string = 'form-control'; // default form class
 
@@ -35,54 +36,53 @@ const processFormItems = <T extends TFormItem[]>(formItems: T):void => {
         throw new Error('Form item property "tagName" is required')
     }
 
-    formItems = [...formItems] as T;
-
     // set formItems global variable
 
-    // formItems.forEach((formItem: unknown) => {
+    formItems.forEach((formItem: unknown) => {
         
-    //     if (isType<TFormItem>(formItem, ['tagName']) === false)
-    //         throw new Error('Form item property "tagName" is required')
+        if (isType<TFormItem>(formItem, ['tagName']) === false)
+            throw new Error('Form item property "tagName" is required')
 
-    //     if (tagNameListArr.includes(formItem.tagName) === false) 
-    //         throw new Error('Form item property tagName "'+formItem.tagName+'" is not a valid tag name')
+        const tagName: string = formItem.tagName;
 
-    //     if (isType<TFormItem>(formItem, ['name']) === false && ['input', 'select', 'textarea'].includes(formItem.tagName)) 
-    //         throw new Error('Form item property "name" is required for input, select and textarea')
+        if (tagNameListArr.includes(tagName) === false) 
+            throw new Error(`Form item property tagName "${tagName}" is not a valid tag name`)
 
-    //     switch(formItem.tagName) {
-    //         case 'input':
+        if (isType<TFormItem>(formItem, ['name']) === false && ['input', 'select', 'textarea'].includes(tagName)) 
+            throw new Error('Form item property "name" is required for input, select and textarea')
 
-    //             break;
+        switch(formItem.tagName) {
+            case 'input':
 
-    //         case 'select':
+                break;
 
-    //             break;
+            case 'select':
 
-    //         case 'textarea':
+                break;
 
-    //             break;
+            case 'textarea':
 
-    //         case 'label':
+                break;
 
-    //             break;
+            case 'label':
 
-    //         case 'div':
-    //             // for div, call again the process for items
-    //             // wrap the items inside the div
-    //             break;
+                break;
 
-    //         default:
-    //             errorLog(`Config item tagName "${formItem.tagName}" is invalid`)
-    //             return;
-    //     }
+            case 'div':
+                // for div, call again the process for items
+                // wrap the items inside the div
+                break;
 
+            default:
+                throw new Error(`Config item tagName "${tagName}" is invalid`)
+        }
 
+        componentList.push(formItem);
 
-    //     // @todo: process the form item
-    //     // @todo: validate the form items, create different types according to what type the form item is. e.g. input[type=text], select, textarea, etc
-    //     // @todo: process the form items by adding the form item components
-    // });
+        // @todo: process the form item
+        // @todo: validate the form items, create different types according to what type the form item is. e.g. input[type=text], select, textarea, etc
+        // @todo: process the form items by adding the form item components
+    });
 }
 
 const processFormAttributes = <T extends object = Readonly<TConfig>>(config: T):void => {
@@ -143,9 +143,10 @@ processConfig(props.config);
     <form 
         v-bind="formAttributes"
         :class="defaultClass"
-    >
-        <template v-for="(formItem, index) in formItems" :key="index">
-            <component :is="formItem.tagName" :attribute="formItem"/>
+    >   
+        <!-- @todo: process nested form items -->
+        <template v-for="(componentItem, index) in componentList" :key="index">
+            <component :is="componentItem.componentName" :attribute="componentItem.attribute"/>
         </template>
     </form>
 </template>
