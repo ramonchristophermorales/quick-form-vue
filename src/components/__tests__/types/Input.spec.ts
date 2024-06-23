@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import type { InputAttributes } from '@/components/types/input'
+import type { TInputAttributes } from '@/components/types/input'
 
 describe('Form', () => {
   const inputAttributes = {
@@ -102,7 +102,7 @@ describe('Form', () => {
   })
 
   test('should enforce required properties', () => {
-    const requriedFormAttribute: InputAttributes = {
+    const requriedFormAttribute: TInputAttributes = {
       name: 'formt-test-name'
     }
 
@@ -110,7 +110,7 @@ describe('Form', () => {
   })
 
   test('should allow missing optional properties', () => {
-    const requriedFormAttribute: InputAttributes = {
+    const requriedFormAttribute: TInputAttributes = {
       name: 'formt-test-name'
     }
 
