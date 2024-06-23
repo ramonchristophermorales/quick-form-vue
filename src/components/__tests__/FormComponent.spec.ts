@@ -202,9 +202,10 @@ describe('FormComponent processConfig function', () => {
 describe('FormComponent processFormItems function', () => {
   const testConfigItems: TConfigItem[] = [
     {
-      tagName: 'div',
+      tagName: 'select',
       class: 'text-class',
-      id: 'text-id'
+      id: 'text-id',
+      name: 'select-name'
     },
     {
       tagName: 'input',
