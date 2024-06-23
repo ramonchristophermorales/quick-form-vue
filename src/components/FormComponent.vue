@@ -149,7 +149,7 @@ processConfig(props.config);
     >   
         <!-- @todo: process nested form items -->
         <template v-for="(componentItem, index) in componentList" :key="index">
-            <component :is="componentItem.componentName" :attributes="componentItem.attributes"/>
+            <component :is="componentItem.componentName" />
         </template>
     </form>
 </template>
