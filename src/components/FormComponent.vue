@@ -90,6 +90,11 @@ const processFormAttributes = <T extends object = Readonly<TConfig>>(config: T):
      // config properties takes priority over form attributes
      for (const [key, val] of Object.entries(config)) {
         if (isKeyOfType<TFormAttributes>(key, FormAttributeList) === false) {
+
+            // items is an array of form items, should not check for key value string
+            if (key === 'items' && Array.isArray(val)) 
+                continue;
+
 			if (typeof key !== 'string' || typeof val !== 'string') {
 				throw new TypeError(`Form attribute "${key}" should be a string and it's value should be a string`)
 			}
