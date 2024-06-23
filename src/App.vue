@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import FormComponent from '@/components/FormComponent.vue'
+import type { TConfig } from './components/types/config';
 
-const config = {
-  method:"post"
+const config: TConfig = {
+  method: "post"
 }
 
 </script>
