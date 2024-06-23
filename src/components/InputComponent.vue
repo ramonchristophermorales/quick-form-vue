@@ -13,5 +13,5 @@ const attributes: Partial<TFormAttributes> = {} as Partial<TFormAttributes>;
 </script>
 
 <template>
-    <input v-bind="attributes" />
+    <input  />
 </template>
