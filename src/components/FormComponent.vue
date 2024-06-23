@@ -51,33 +51,31 @@ const processFormItems = <T extends TFormItem[]>(formItems: T):void => {
         if (isType<TFormItem>(formItem, ['name']) === false && ['input', 'select', 'textarea'].includes(tagName)) 
             throw new Error('Form item property "name" is required for input, select and textarea')
 
+        let componentName:string = '';
+
         switch(formItem.tagName) {
             case 'input':
-
+                componentName = 'InputComponent';
                 break;
 
             case 'select':
-
+                componentName = 'SelectComponent';
                 break;
 
             case 'textarea':
-
+                componentName = 'TextAreaComponent';
                 break;
 
-            case 'label':
-
-                break;
-
-            case 'div':
-                // for div, call again the process for items
-                // wrap the items inside the div
-                break;
+            // add one more for other components that will process other html tags
 
             default:
                 throw new Error(`Config item tagName "${tagName}" is invalid`)
         }
 
-        componentList.push(formItem);
+        componentList.push({
+            componentName: componentName,
+            attributes: formItem
+        });
 
         // @todo: process the form item
         // @todo: validate the form items, create different types according to what type the form item is. e.g. input[type=text], select, textarea, etc
@@ -146,7 +144,7 @@ processConfig(props.config);
     >   
         <!-- @todo: process nested form items -->
         <template v-for="(componentItem, index) in componentList" :key="index">
-            <component :is="componentItem.componentName" :attribute="componentItem.attribute"/>
+            <component :is="componentItem.componentName" :attributes="componentItem.attributes"/>
         </template>
     </form>
 </template>
