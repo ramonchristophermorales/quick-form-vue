@@ -260,7 +260,7 @@ describe('FormComponent processFormItems function', () => {
     expect(processFormItemsSpy).toHaveReturnedWith(undefined)
   })
 
-  test('should throw an error if tagName is invalid', () => {
+  test('should throw an error if name form item property is invalid', () => {
     const wrapper = getWrapper()
 
     const expectedConfigItem = {
@@ -272,7 +272,7 @@ describe('FormComponent processFormItems function', () => {
     expect(() => processFormItems(expectedConfigItem)).toThrow()
   })
 
-  test('should throw an error if name is invalid', () => {
+  test('should throw an error if tagName form item property is invalid', () => {
     const wrapper = getWrapper()
 
     const expectedConfigItem = {
