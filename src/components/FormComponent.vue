@@ -1,9 +1,12 @@
 <script setup lang="ts">
 
-import type {TConfig, TConfigItem, TFormItem}  from '@/components/types/config';
+import type {TConfig, TFormItem}  from '@/components/types/config';
 import type { TFormAttributes } from '@/components/types/form';
 import  FormAttributeList from '@/components/typeDefaults/form';
 import { errorLog, warnLog, isType, isKeyOfType } from '@/helper';
+import tagNameListArr from '@/assets/data/tagNameList.json';
+
+// import InputComponent from '@components/InputComponent.vue';
 
 const props = defineProps({
     config: {
@@ -16,56 +19,70 @@ const props = defineProps({
 // const formAttributes: Partial<TFormAttributes> = {} as Partial<TFormAttributes>;
 const formAttributes:any = {};
 
-var formItems: TConfigItem[] = [] as TConfigItem[];
+// used to loop in the form items
+const formItems: TFormItem[] = [];   
 
 var defaultClass:string = 'form-control'; // default form class
 
-const processFormItems = <T = Readonly<unknown>>(formItems: T):void => {
+const processFormItems = <T extends TFormItem[]>(formItems: T):void => {
+    
 
     if (formItems === undefined || Array.isArray(formItems) === false || formItems.length === 0) {
         throw new Error('Form "items" is required if there are no form components declared')
     }
 
-    formItems.forEach((formItem: unknown) => {
+    if (isType<TFormItem[]>(formItems[0], ['tagName']) === false) {
+        throw new Error('Form item property "tagName" is required')
+    }
+
+    formItems = [...formItems] as T;
+
+    // set formItems global variable
+
+    // formItems.forEach((formItem: unknown) => {
         
-        if (isType<TFormItem>(formItem, ['tagName']) === false)
-            throw new Error('Form item  "tagName" is required')
+    //     if (isType<TFormItem>(formItem, ['tagName']) === false)
+    //         throw new Error('Form item property "tagName" is required')
+
+    //     if (tagNameListArr.includes(formItem.tagName) === false) 
+    //         throw new Error('Form item property tagName "'+formItem.tagName+'" is not a valid tag name')
+
+    //     if (isType<TFormItem>(formItem, ['name']) === false && ['input', 'select', 'textarea'].includes(formItem.tagName)) 
+    //         throw new Error('Form item property "name" is required for input, select and textarea')
+
+    //     switch(formItem.tagName) {
+    //         case 'input':
+
+    //             break;
+
+    //         case 'select':
+
+    //             break;
+
+    //         case 'textarea':
+
+    //             break;
+
+    //         case 'label':
+
+    //             break;
+
+    //         case 'div':
+    //             // for div, call again the process for items
+    //             // wrap the items inside the div
+    //             break;
+
+    //         default:
+    //             errorLog(`Config item tagName "${formItem.tagName}" is invalid`)
+    //             return;
+    //     }
 
 
-        if (['input', 'select', 'textarea'].includes(formItem.tagName) === true && isType<TFormItem>(formItem, ['name']) === false) 
-            throw new Error('Form item "name" is required for input, select and textarea')
 
-        switch(formItem.tagName) {
-            case 'input':
-
-                break;
-
-            case 'select':
-
-                break;
-
-            case 'textarea':
-
-                break;
-
-            case 'label':
-
-                break;
-
-            case 'div':
-                // for div, call again the process for items
-                // wrap the items inside the div
-                break;
-
-            default:
-                errorLog(`Config item tagName "${formItem.tagName}" is invalid`)
-                return;
-        }
-
-        // @todo: process the form item
-        // @todo: validate the form items, create different types according to what type the form item is. e.g. input[type=text], select, textarea, etc
-        // @todo: process the form items by adding the form item components
-    });
+    //     // @todo: process the form item
+    //     // @todo: validate the form items, create different types according to what type the form item is. e.g. input[type=text], select, textarea, etc
+    //     // @todo: process the form items by adding the form item components
+    // });
 }
 
 const processFormAttributes = <T extends object = Readonly<TConfig>>(config: T):void => {
@@ -104,18 +121,17 @@ const processFormAttributes = <T extends object = Readonly<TConfig>>(config: T):
  */
 const processConfig = <T = Readonly<unknown>>(config: T):void => {   
     
+    
     if (isType<TConfig>(config, ['name', 'items']) === false) {
         throw new Error('Prop "config.items" and "config.name" is required, and it should be an object')
     }
+
+    processFormAttributes(config);
     
     // config items takes priority and change the formItems from component props
     if (config.items !== undefined && config.items.length > 0) {
-        processFormItems(config.items);
-    }
-
-	delete config.items;
-
-    processFormAttributes(config);
+        processFormItems<TFormItem[]>(config.items);
+    }  
 }
 
 // process the config attribute passed first
@@ -127,8 +143,10 @@ processConfig(props.config);
     <form 
         v-bind="formAttributes"
         :class="defaultClass"
-        ref="form"
     >
+        <template v-for="(formItem, index) in formItems" :key="index">
+            <component :is="formItem.tagName" :attribute="formItem"/>
+        </template>
     </form>
 </template>
 
