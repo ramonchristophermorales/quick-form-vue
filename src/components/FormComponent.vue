@@ -44,6 +44,7 @@ const processFormItems = <T extends TFormItem[]>(formItems: T):void => {
             throw new Error('Form item property "tagName" is required')
 
         const tagName: string = formItem.tagName;
+        
 
         if (tagNameListArr.includes(tagName) === false) 
             throw new Error(`Form item property tagName "${tagName}" is not a valid tag name`)
@@ -76,10 +77,6 @@ const processFormItems = <T extends TFormItem[]>(formItems: T):void => {
             componentName: componentName,
             attributes: formItem
         });
-
-        // @todo: process the form item
-        // @todo: validate the form items, create different types according to what type the form item is. e.g. input[type=text], select, textarea, etc
-        // @todo: process the form items by adding the form item components
     });
 }
 
@@ -114,8 +111,6 @@ const processFormAttributes = <T extends object = Readonly<TConfig>>(config: T):
 	if (listOfUnknownAttributes.length > 0) {
 		warnLog(`Form attributes: ${listOfUnknownAttributes.join(', ')} are not known to the form component`)
 	}
-
-    // @todo: process the direct props of the form component, for now use props.config for the form attribs
 }
 
 /**
@@ -149,7 +144,7 @@ processConfig(props.config);
     >   
         <!-- @todo: process nested form items -->
         <template v-for="(componentItem, index) in componentList" :key="index">
-            <component :is="componentItem.componentName" />
+            <component :is="componentItem.componentName" :component-attributes="componentItem.attributes" />
         </template>
     </form>
 </template>
