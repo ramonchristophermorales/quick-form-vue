@@ -24,7 +24,7 @@ const validateType = (): void => {
     }
 
     if (inputTypes.includes(attributes.type) === false) {
-        throw new TypeError("Form input attribute 'type' should be one of the following: " + validTypes.join(', '));
+        throw new TypeError("Form input attribute 'type' should be one of the following: " + inputTypes.join(', '));
     }
 }
 
@@ -36,9 +36,6 @@ const validateName = (): void => {
         throw new Error('Form input attribute "name" is required and it should be a string')
     }
 }
-
-
-// check the other properties if they are valid as attributes
 
 // check if name property is defined
 validateName();
