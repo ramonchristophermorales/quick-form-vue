@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import type { TFormAttributes } from '@/components/types/form';
-import { isKeyOfType } from '@/helper';
+import { isType } from '@/helper';
 import type { TInputAttributes } from './types/input';
 import inputTypes from '@/assets/data/inputTypeList.json';
 
@@ -12,19 +12,19 @@ const props = defineProps({
     }
 })
 
-const attributes: Readonly<Partial<TInputAttributes>> = props.componentAttributes;
+const attributes: Readonly<TInputAttributes> = props.componentAttributes;
 
 /**
  * check if the property type is defined and valid
  */
 const validateType = (): void => {
 
-    if (isKeyOfType<TInputAttributes>(attributes, ['type']) === false || typeof attributes.type !== 'string') {
-        throw new Error('Form input attribute "type" is required and it should be a string')
+    if (isType<TInputAttributes>(attributes, ['type']) === false || typeof attributes.type !== 'string') {
+        throw new TypeError('Form input attribute "type" is required and it should be a string')
     }
 
     if (inputTypes.includes(attributes.type) === false) {
-        throw new TypeError("Form input attribute 'type' should be one of the following: " + inputTypes.join(', '));
+        throw new Error("Form input attribute 'type' should be one of the following: " + inputTypes.join(', '));
     }
 }
 
@@ -32,8 +32,8 @@ const validateType = (): void => {
  * check if name property is defined
  */
 const validateName = (): void => {
-    if (isKeyOfType<TInputAttributes>(attributes, ['name']) === false || typeof attributes.name !== 'string') {
-        throw new Error('Form input attribute "name" is required and it should be a string')
+    if (isType<TInputAttributes>(attributes, ['name']) === false || typeof attributes.name !== 'string') {
+        throw new TypeError('Form input attribute "name" is required and it should be a string')
     }
 }
 
