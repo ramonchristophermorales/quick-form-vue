@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import type { TFormAttributes } from '@/components/types/form';
-import { isKeyOfType, warnLog } from '@/helper';
+import { isKeyOfType } from '@/helper';
 import type { TInputAttributes } from './types/input';
 import inputTypes from '@/assets/data/inputTypeList.json';
 
